@@ -1,10 +1,22 @@
 import { test, expect } from "@playwright/test";
 
-test("valid user can login", async ({ page }) => {
-  await page.goto("https://saucedemo.com");
+const websiteLink = "https://saucedemo.com";
 
-  await page.getByPlaceholder("Username").fill("standard_user");
-  await page.getByPlaceholder("Password").fill("secret_sauce");
+const validUser = {
+  username: "standard_user",
+  password: "secret_sauce",
+};
+
+const lockedOutUser = {
+  username: "locked_out_user",
+  password: "secret_sauce",
+};
+
+test("valid user can login", async ({ page }) => {
+  await page.goto(websiteLink);
+
+  await page.getByPlaceholder("Username").fill(validUser.username);
+  await page.getByPlaceholder("Password").fill(validUser.password);
   await page.getByRole("button", { name: "Login" }).click();
 
   await expect(page).toHaveURL(/inventory/);
@@ -12,10 +24,10 @@ test("valid user can login", async ({ page }) => {
 });
 
 test("locked out user cannot login", async ({ page }) => {
-  await page.goto("https://saucedemo.com");
+  await page.goto(websiteLink);
 
-  await page.getByPlaceholder("Username").fill("locked_out_user");
-  await page.getByPlaceholder("Password").fill("secret_sauce");
+  await page.getByPlaceholder("Username").fill(lockedOutUser.username);
+  await page.getByPlaceholder("Password").fill(lockedOutUser.password);
   await page.getByRole("button", { name: "Login" }).click();
 
   await expect(
